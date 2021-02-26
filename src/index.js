@@ -49,57 +49,63 @@ const ordersTable = blessed.table({
   }
 });
 
-kraken.api("Balance").then(resp => {
-  CachedData.eur = resp.result["ZEUR"];
-  CachedData.xbt = resp.result["XXBT"];
-  CachedData.eth = resp.result["XETH"];
-  CachedData.ada = resp.result["ADA"];
-  return kraken.api("TradeBalance", {asset: "EUR"});
-}).then(resp => {
-  CachedData.equivalentBalance = resp.result.eb;
-  return kraken.api("OpenOrders");
-}).then(resp => {
-  let open = resp.result.open;
-  let orders = [];
-  for (let id of Object.keys(open)) {
-    let order = open[id];
+function loadOrders() {
+  kraken.api("Balance").then(resp => {
+    CachedData.eur = resp.result["ZEUR"];
+    CachedData.xbt = resp.result["XXBT"];
+    CachedData.eth = resp.result["XETH"];
+    CachedData.ada = resp.result["ADA"];
+    return kraken.api("TradeBalance", {asset: "EUR"});
+  }).then(resp => {
+    CachedData.equivalentBalance = resp.result.eb;
+    return kraken.api("OpenOrders");
+  }).then(resp => {
+    let open = resp.result.open;
+    let orders = [];
+    for (let id of Object.keys(open)) {
+      let order = open[id];
 
-    orders.push(new Order(
-      id,
-      order.descr.pair,
-      order.descr.type,
-      order.vol,
-      order.descr.price,
-      order.descr.ordertype,
-      order.status,
-      new Date(order.opentm * 1000)
-    ));
-  }
-  CachedData.orders = orders;
+      orders.push(new Order(
+        id,
+        order.descr.pair,
+        order.descr.type,
+        order.vol,
+        order.descr.price,
+        order.descr.ordertype,
+        order.status,
+        new Date(order.opentm * 1000)
+      ));
+    }
+    CachedData.orders = orders;
 
-  let info = [
-    ["Tot", removeTrailingZero(CachedData.equivalentBalance) + " €"],
-    ["EUR", removeTrailingZero(CachedData.eur)],
-    ["XBT", removeTrailingZero(CachedData.xbt)],
-    ["ETH", removeTrailingZero(CachedData.eth)],
-    ["ADA", removeTrailingZero(CachedData.ada)]
-  ];
-  infoTable.setData(info);
+    let info = [
+      ["Tot", removeTrailingZero(CachedData.equivalentBalance) + " €"],
+      ["EUR", removeTrailingZero(CachedData.eur)],
+      ["XBT", removeTrailingZero(CachedData.xbt)],
+      ["ETH", removeTrailingZero(CachedData.eth)],
+      ["ADA", removeTrailingZero(CachedData.ada)]
+    ];
+    infoTable.setData(info);
 
-  let data = [["Pair", "Type", "Order Type", "Volume", "Price", "Time"]];
-  for (let order of CachedData.orders) {
-    data.push([
-      order.pair,
-      order.type,
-      order.orderType,
-      order.volume,
-      order.price,
-      order.openTime.toLocaleString()
-    ]);
-  }
-  ordersTable.setData(data);
-  screen.render();
-});
+    let data = [["Pair", "Type", "Order Type", "Volume", "Price", "Time"]];
+    for (let order of CachedData.orders) {
+      data.push([
+        order.pair,
+        order.type,
+        order.orderType,
+        order.volume,
+        order.price,
+        order.openTime.toLocaleString()
+      ]);
+    }
+    ordersTable.setData(data);
+    screen.render();
+  });
+}
+
+loadOrders();
+setInterval(loadOrders, 10000);
+
 
 // get Ticker Info
 //console.log(await kraken.api("Ticker", {pair: "XXBTZEUR"}));
