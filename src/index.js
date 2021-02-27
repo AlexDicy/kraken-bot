@@ -8,7 +8,7 @@ import {Type} from "./Enums.js";
 
 const key = "***REMOVED***";
 const secret = "***REMOVED***";
-const kraken = new KrakenClient(key, secret);
+export const kraken = new KrakenClient(key, secret);
 
 // fix broken Table method
 Table.prototype.oSetData = Table.prototype.setData;
@@ -120,7 +120,7 @@ const logText = blessed.box({
   }
 });
 
-let botShouldRun = true;
+let botRunIndex = 0;
 
 // +4 on the rate counter
 function loadOrders() {
@@ -171,17 +171,7 @@ function loadOrders() {
     let orders = [];
     for (let id of Object.keys(open)) {
       let order = open[id];
-
-      orders.push(new Order(
-        id,
-        order.descr.pair,
-        order.descr.type,
-        removeTrailingZero(order.vol),
-        order.descr.price,
-        order.descr.ordertype,
-        order.status,
-        new Date(order.opentm * 1000)
-      ));
+      orders.push(Order.fromAPI(order));
     }
     CachedData.orders = orders;
 
@@ -208,11 +198,11 @@ function loadOrders() {
   }).finally(() => {
     setStatus("idle");
     // only run the bot half of the times
-    if (botShouldRun) {
+    if (botRunIndex > 2) {
       Bot.run();
-      botShouldRun = false;
+      botRunIndex = 0;
     } else {
-      botShouldRun = true;
+      botRunIndex++;
     }
   });
 }
@@ -235,6 +225,6 @@ export function log(message) {
   screen.render();
 }
 
-function removeTrailingZero(value) {
+export function removeTrailingZero(value) {
   return value.replace(/([0-9])[0]+$/, "$1");
 }
