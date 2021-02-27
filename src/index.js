@@ -157,11 +157,15 @@ function loadOrders() {
     ];
 
     avgTable.setData(data);
+  }).then(() => {
+    // data has been loaded successfully, set as non-dirty
+    CachedData.dirty = false;
+  }).catch(error => {
+    CachedData.dirty = true;
+    setStatus("Error: " + error);
+    console.log("Error: " + error);
   }).finally(() => {
     setStatus("idle");
-  }).catch(error => {
-    setStatus("ooopsie: " + error);
-    console.log("ooopsie: " + error);
   });
 }
 

@@ -1,4 +1,8 @@
 export default class CachedData {
+  /**
+   * @type boolean true if data should not be considered valid
+   */
+  static dirty = true;
   // in EUR
   static equivalentBalance = 0;
   // balance
