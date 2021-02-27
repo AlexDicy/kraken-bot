@@ -1,4 +1,5 @@
 import blessed from "neo-blessed";
+import Table from "neo-blessed/lib/widgets/table.js";
 import KrakenClient from "./kraken.js";
 import CachedData from "./CachedData.js";
 import Order from "./Order.js";
@@ -9,19 +10,37 @@ const key = "***REMOVED***";
 const secret = "***REMOVED***";
 const kraken = new KrakenClient(key, secret);
 
-const screen = blessed.screen({dockBorders: true});
+// fix broken Table method
+Table.prototype.oSetData = Table.prototype.setData;
+Table.prototype.setData = function (rows) {
+  if (rows instanceof Array) {
+    for (let row of rows) {
+      row[0] = " " + row[0];
+    }
+  }
+  this.oSetData(rows);
+};
+
+const screen = blessed.screen({autoPadding: true, dockBorders: true});
 const topText = blessed.text({
   parent: screen,
-  left: 1,
-  tags: true
+  width: "100%",
+  tags: true,
+  border: "line",
+  padding: {left: 1},
+  style: {
+    border: {
+      fg: "#508ad6"
+    }
+  }
 });
 const infoTable = blessed.table({
   parent: screen,
-  top: 1,
+  top: 2,
   width: 25,
-  scrollable: true,
   noCellBorders: true,
   border: "line",
+  scrollable: true,
   align: "left",
   tags: true,
   style: {
@@ -38,14 +57,18 @@ const infoTable = blessed.table({
 });
 const avgTable = blessed.table({
   parent: screen,
-  top: 1,
-  left: 25 - 2,
+  top: 2,
+  left: 25 - 1,
   width: 45,
-  scrollable: true,
   noCellBorders: true,
   border: "line",
+  scrollable: true,
   align: "left",
   tags: true,
+  padding: {
+    left: 1,
+    right: -1
+  },
   style: {
     border: {
       fg: "#508ad6"
@@ -60,12 +83,12 @@ const avgTable = blessed.table({
 });
 const ordersTable = blessed.table({
   parent: screen,
-  top: 1,
-  left: 70 - 4,
+  top: 2,
+  left: 70 - 2,
   width: 42,
-  scrollable: true,
   noCellBorders: true,
   border: "line",
+  scrollable: true,
   align: "left",
   tags: true,
   style: {
@@ -82,11 +105,14 @@ const ordersTable = blessed.table({
 });
 const logText = blessed.box({
   parent: screen,
-  top: 1,
-  left: 112 - 6,
+  top: 2,
+  left: 112 - 3,
   right: 0,
-  scrollable: true,
+  content: "{bold}Welcome to DicyDev Kraken Bot{/bold}",
   border: "line",
+  scrollable: true,
+  padding: {left: 1},
+  tags: true,
   style: {
     border: {
       fg: "#508ad6"
@@ -97,6 +123,7 @@ const logText = blessed.box({
 
 // +4 on the rate counter
 function loadOrders() {
+  log("started fetching data");
   setStatus("loading orders");
   // +1 on the rate counter
   kraken.api("Balance").then(resp => {
@@ -171,6 +198,7 @@ function loadOrders() {
     // get asset ticker for XBT, ETH and ADA
     setStatus("loading ticker");
   }).then(() => {
+    log("data fetched successfully");
     // data has been loaded successfully, set as non-dirty
     CachedData.dirty = false;
   }).catch(error => {
@@ -191,16 +219,13 @@ setInterval(loadOrders, 10000);
 
 export function setStatus(status) {
   topText.setContent("{bold}Status{/bold}: " + status);
-  log(status, false);
   screen.render();
 }
 
-export function log(message, render = true) {
+export function log(message) {
   logText.insertBottom(message);
   logText.setScrollPerc(100);
-  if (render) {
-    screen.render();
-  }
+  screen.render();
 }
 
 function removeTrailingZero(value) {
