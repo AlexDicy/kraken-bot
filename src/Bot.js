@@ -60,7 +60,7 @@ export default class Bot {
 
         // create buy order
         await kraken.api("AddOrder", buyParams).then(() => {
-          log("-> BUY " + volume.toFixed(4) + " @ " + currentPrice);
+          log("-> BUY " + volume + " @ " + currentPrice);
         }).catch(error => {
           // could not create buy order, just skip
           log("{red-fg}ERROR:{/red-fg} " + error);
@@ -70,7 +70,7 @@ export default class Bot {
           // create sell order after 10 seconds
           setTimeout(() => {
             kraken.api("AddOrder", sellParams).then(() => {
-              log("-> SELL " + volume.toFixed(4) + " @ " + sellPrice);
+              log("-> SELL " + volume + " @ " + sellPrice);
             }).catch(error => {
               // could not create sell order, try again in 2 seconds
               log("{red-fg}ERROR:{/red-fg} " + error);
