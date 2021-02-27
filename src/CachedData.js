@@ -49,19 +49,28 @@ export default class CachedData {
       name: "XBT",
       asset: "XXBT",
       pair: "XXBTZEUR",
+      pairAlias: "XBTEUR", // used in orders
       var: "xbt",
+      tradeValue: 70,
+      maxTrades: 7
     },
     {
       name: "ETH",
       asset: "XETH",
       pair: "XETHZEUR",
+      pairAlias: "ETHEUR",
       var: "eth",
+      tradeValue: 50,
+      maxTrades: 4
     },
     {
       name: "ADA",
       asset: "ADA",
       pair: "ADAEUR",
+      pairAlias: "ADAEUR",
       var: "ada",
+      tradeValue: 20,
+      maxTrades: 5
     }
   ];
 }

@@ -120,6 +120,7 @@ const logText = blessed.box({
   }
 });
 
+let botShouldRun = true;
 
 // +4 on the rate counter
 function loadOrders() {
@@ -148,7 +149,7 @@ function loadOrders() {
     return kraken.api("Ticker", {pair: "XXBTZEUR,XETHZEUR,ADAEUR"});
   }).then(resp => {
     setStatus("loading 24h");
-    let data = [["{bold}24h{/bold}", "{bold}average{/bold}", "{bold}high{/bold}"]];
+    let data = [["{bold}price{/bold}", "{bold}price{/bold}", "{bold}24h high{/bold}"]];
     for (let asset of CachedData.assets) {
       CachedData.price[asset.var].a = resp.result[asset.pair].a[0];
       CachedData.price[asset.var].b = resp.result[asset.pair].b[0];
@@ -157,7 +158,7 @@ function loadOrders() {
 
       data.push([
         `{bold}${asset.name}{/bold}`,
-        removeTrailingZero(CachedData.average[asset.var]) + " €",
+        removeTrailingZero(CachedData.price[asset.var].a) + " €",
         removeTrailingZero(CachedData.high[asset.var]) + " €"
       ]);
     }
@@ -206,7 +207,13 @@ function loadOrders() {
     setStatus("Error: " + error);
   }).finally(() => {
     setStatus("idle");
-    Bot.run();
+    // only run the bot half of the times
+    if (botShouldRun) {
+      Bot.run();
+      botShouldRun = false;
+    } else {
+      botShouldRun = true;
+    }
   });
 }
 
