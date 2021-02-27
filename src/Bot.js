@@ -25,7 +25,7 @@ export default class Bot {
         if (order.pair === asset.pairAlias) {
           openOrders++;
           let hours = (Date.now() - order.openTime.getTime()) / 1000 / 60 / 60;
-          if (hours <= 12 && (lowestOrder == null || lowestOrder.price > order.price)) {
+          if (hours <= 24 && (lowestOrder == null || lowestOrder.price > order.price)) {
             lowestOrder = order;
           }
         }
