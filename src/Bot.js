@@ -15,6 +15,10 @@ export default class Bot {
     // altrimenti uso il prezzo altro 24h
     // se il prezzo è sotto il 2% compro.
     for (let asset of CachedData.assets) {
+      // skip asset if max trades is 0
+      if (asset.maxTrades <= 0) {
+        return;
+      }
       // keep track of the open orders
       let openOrders = 0;
 
