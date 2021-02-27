@@ -7,6 +7,11 @@ export default class CachedData {
   static eth = 0;
   static ada = 0;
 
+  // price 24h average
+  static xbtAvg = 0;
+  static ethAvg = 0;
+  static adaAvg = 0;
+
   /** @type Order[] */
   static orders = [];
 }
