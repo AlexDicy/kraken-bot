@@ -2,6 +2,8 @@ import blessed from "neo-blessed";
 import KrakenClient from "./kraken.js";
 import CachedData from "./CachedData.js";
 import Order from "./Order.js";
+import Bot from "./Bot.js";
+import {Type} from "./Enums.js";
 
 const key = "***REMOVED***";
 const secret = "***REMOVED***";
@@ -12,13 +14,6 @@ const topText = blessed.text({
   parent: screen,
   left: 1,
   tags: true
-});
-setStatus("starting");
-const layout = blessed.layout({
-  //parent: screen,
-  top: 1,
-  width: "100%",
-  height: "100%"
 });
 const infoTable = blessed.table({
   parent: screen,
@@ -31,13 +26,13 @@ const infoTable = blessed.table({
   tags: true,
   style: {
     border: {
-      fg: "#0000ff"
+      fg: "#508ad6"
     },
     header: {
-      fg: "#ccFFcc"
+      fg: "#9abf22"
     },
     cell: {
-      fg: "#ccFFcc"
+      fg: "#9abf22"
     }
   }
 });
@@ -45,7 +40,7 @@ const avgTable = blessed.table({
   parent: screen,
   top: 1,
   left: 25 - 2,
-  width: 25,
+  width: 45,
   scrollable: true,
   noCellBorders: true,
   border: "line",
@@ -53,33 +48,48 @@ const avgTable = blessed.table({
   tags: true,
   style: {
     border: {
-      fg: "#0000ff"
+      fg: "#508ad6"
     },
     header: {
-      fg: "#ccFFcc"
+      fg: "#9abf22"
     },
     cell: {
-      fg: "#ccFFcc"
+      fg: "#9abf22"
     }
   }
 });
 const ordersTable = blessed.table({
   parent: screen,
   top: 1,
-  left: 50 - 4,
+  left: 70 - 4,
+  width: 42,
   scrollable: true,
   noCellBorders: true,
   border: "line",
   align: "left",
+  tags: true,
   style: {
     border: {
-      fg: "#0000ff"
+      fg: "#508ad6"
     },
     header: {
       bold: true
     },
     cell: {
-      fg: "#ccFFcc"
+      fg: "#9abf22"
+    }
+  }
+});
+const logText = blessed.box({
+  parent: screen,
+  top: 1,
+  left: 112 - 6,
+  right: 0,
+  scrollable: true,
+  border: "line",
+  style: {
+    border: {
+      fg: "#508ad6"
     }
   }
 });
@@ -90,15 +100,43 @@ function loadOrders() {
   setStatus("loading orders");
   // +1 on the rate counter
   kraken.api("Balance").then(resp => {
-    CachedData.eur = resp.result["ZEUR"];
-    CachedData.xbt = resp.result["XXBT"];
-    CachedData.eth = resp.result["XETH"];
-    CachedData.ada = resp.result["ADA"];
+    CachedData.balance.eur = resp.result["ZEUR"];
+    CachedData.balance.xbt = resp.result["XXBT"];
+    CachedData.balance.eth = resp.result["XETH"];
+    CachedData.balance.ada = resp.result["ADA"];
     // +1 on the rate counter
     return kraken.api("TradeBalance", {asset: "EUR"});
   }).then(resp => {
-    CachedData.equivalentBalance = resp.result.eb;
+    CachedData.balance.equivalent = resp.result.eb;
+
+    let info = [
+      ["{bold}tot.{/bold}", removeTrailingZero(CachedData.balance.equivalent) + " €"],
+      ["{bold}EUR{/bold}", removeTrailingZero(CachedData.balance.eur)],
+      ["{bold}XBT{/bold}", removeTrailingZero(CachedData.balance.xbt)],
+      ["{bold}ETH{/bold}", removeTrailingZero(CachedData.balance.eth)],
+      ["{bold}ADA{/bold}", removeTrailingZero(CachedData.balance.ada)]
+    ];
+    infoTable.setData(info);
     // +2 on the rate counter
+    return kraken.api("Ticker", {pair: "XXBTZEUR,XETHZEUR,ADAEUR"});
+  }).then(resp => {
+    setStatus("loading 24h");
+    let data = [["{bold}24h{/bold}", "{bold}average{/bold}", "{bold}high{/bold}"]];
+    for (let asset of CachedData.assets) {
+      CachedData.price[asset.var].a = resp.result[asset.pair].a[0];
+      CachedData.price[asset.var].b = resp.result[asset.pair].b[0];
+      CachedData.average[asset.var] = resp.result[asset.pair].p[1];
+      CachedData.high[asset.var] = resp.result[asset.pair].h[1];
+
+      data.push([
+        `{bold}${asset.name}{/bold}`,
+        removeTrailingZero(CachedData.average[asset.var]) + " €",
+        removeTrailingZero(CachedData.high[asset.var]) + " €"
+      ]);
+    }
+
+    avgTable.setData(data);
+
     return kraken.api("OpenOrders");
   }).then(resp => {
     let open = resp.result.open;
@@ -119,64 +157,50 @@ function loadOrders() {
     }
     CachedData.orders = orders;
 
-    let info = [
-      ["{bold}Tot{/bold}", removeTrailingZero(CachedData.equivalentBalance) + " €"],
-      ["{bold}EUR{/bold}", removeTrailingZero(CachedData.eur)],
-      ["{bold}XBT{/bold}", removeTrailingZero(CachedData.xbt)],
-      ["{bold}ETH{/bold}", removeTrailingZero(CachedData.eth)],
-      ["{bold}ADA{/bold}", removeTrailingZero(CachedData.ada)]
-    ];
-    infoTable.setData(info);
-
-    let data = [["Pair", "Type", "Order Type", "Volume", "Price", "Time"]];
+    let data = [["pair", "type", "volume", "price"]];
     for (let order of CachedData.orders) {
       data.push([
         order.pair,
-        order.type,
-        order.orderType,
+        order.type === Type.BUY ? "buy" : "{#BFAA22-fg}sell{/#BFAA22-fg}",
         order.volume,
-        order.price,
-        order.openTime.toLocaleString()
+        order.price
       ]);
     }
     ordersTable.setData(data);
     screen.render();
     // get asset ticker for XBT, ETH and ADA
     setStatus("loading ticker");
-    return kraken.api("Ticker", {pair: "XXBTZEUR,XETHZEUR,ADAEUR"});
-  }).then(resp => {
-    setStatus("loading 24h average");
-    CachedData.xbtAvg = resp.result["XXBTZEUR"].p[1];
-    CachedData.ethAvg = resp.result["XETHZEUR"].p[1];
-    CachedData.adaAvg = resp.result["ADAEUR"].p[1];
-    let data = [
-      ["{bold}24h{/bold}", "{bold}average{/bold}"],
-      ["{bold}XBT{/bold}", removeTrailingZero(CachedData.xbtAvg) + " €"],
-      ["{bold}ETH{/bold}", removeTrailingZero(CachedData.ethAvg) + " €"],
-      ["{bold}ADA{/bold}", removeTrailingZero(CachedData.adaAvg) + " €"]
-    ];
-
-    avgTable.setData(data);
   }).then(() => {
     // data has been loaded successfully, set as non-dirty
     CachedData.dirty = false;
   }).catch(error => {
     CachedData.dirty = true;
     setStatus("Error: " + error);
-    console.log("Error: " + error);
   }).finally(() => {
     setStatus("idle");
+    Bot.run();
   });
 }
 
+// start
+setStatus("starting");
 loadOrders();
 // can be called every > 8 seconds for the rate counter
 setInterval(loadOrders, 10000);
 
 
-function setStatus(status) {
+export function setStatus(status) {
   topText.setContent("{bold}Status{/bold}: " + status);
+  log(status, false);
   screen.render();
+}
+
+export function log(message, render = true) {
+  logText.insertBottom(message);
+  logText.setScrollPerc(100);
+  if (render) {
+    screen.render();
+  }
 }
 
 function removeTrailingZero(value) {
