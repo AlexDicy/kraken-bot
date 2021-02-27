@@ -78,7 +78,7 @@ export default class Bot {
             }).catch(error => {
               // could not create sell order, try again in 2 seconds
               log("{red-fg}ERROR:{/red-fg} " + error);
-              log("retrying sell order in 2 seconds...");
+              log("retrying sell order in 5 seconds...");
               // try again
               setTimeout(() => {
                 kraken.api("AddOrder", sellParams).then(() => {
@@ -87,7 +87,7 @@ export default class Bot {
                   // this is a fatal error and should be notified
                   log("COULD NOT CREATE SELL ORDER: " + error)
                 });
-              }, 2000);
+              }, 5000);
             });
           }, 10000);
         });
