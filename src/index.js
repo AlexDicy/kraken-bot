@@ -268,6 +268,9 @@ function sendMessage(type, data, client = null) {
 }
 
 export function sendError(error, client = null) {
+  if (error instanceof Error) {
+    error = error.message;
+  }
   sendMessage("ERROR", {
     error: error
   }, client);
