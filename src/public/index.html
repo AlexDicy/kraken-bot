@@ -22,9 +22,9 @@
     <toast v-for="alert in alerts" :text="alert.text" :key="alert.id"></toast>
   </div>
   <div class="card card-bg">
-    <div class="card-body">
+    <div class="card-body table-responsive">
       <h4 class="card-title">Open Orders</h4>
-      <table class="card-text table table-responsive table-dark mono fw-200">
+      <table class="card-text table table-dark mono fw-200">
         <tr>
           <th>pair</th>
           <th>type</th>
@@ -47,9 +47,9 @@
   <div class="row mt-4">
     <div class="col-md">
       <div class="card card-bg">
-        <div class="card-body">
+        <div class="card-body table-responsive">
           <h4 class="card-title">Balance</h4>
-          <table class="card-text table table-responsive table-dark mono fw-200">
+          <table class="card-text table table-dark mono fw-200">
             <tr v-for="(value, index) of balance" :key="index">
               <th>{{ index == "equivalent" ? "tot." : index.toUpperCase() }}</th>
               <td class="data-color">{{ value + (index == "equivalent" ? " €" : "") }}</td>
@@ -60,9 +60,9 @@
     </div>
     <div class="col-md">
       <div class="card card-bg h-100">
-        <div class="card-body">
+        <div class="card-body table-responsive">
           <h4 class="card-title">Price</h4>
-          <table class="card-text table table-responsive table-dark mono fw-200">
+          <table class="card-text table table-dark mono fw-200">
             <tr>
               <th>asset</th>
               <th>price</th>
