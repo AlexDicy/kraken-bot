@@ -1,0 +1,66 @@
+html, body {
+    background-color: hsl(240, 9%, 13%);
+    font-family: "Quicksand", sans-serif;
+}
+
+.mono {
+    font-family: "JetBrains Mono", monospace;
+}
+
+.fw-200 {
+    font-weight: 200;
+}
+
+.card-bg {
+    background-color: hsl(235, 22%, 20%);
+    box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.1);
+    font-weight: 300;
+}
+
+table th {
+    font-weight: 500;
+}
+
+.table-dark {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: hsl(240, 8%, 19%);
+    --bs-table-striped-color: #fff;
+    --bs-table-active-bg: hsl(240, 6%, 23%);
+    --bs-table-active-color: #fff;
+    --bs-table-hover-bg: hsl(240, 7%, 21%);
+    --bs-table-hover-color: #fff;
+    color: #fff;
+    border-color: hsl(240, 20%, 26%);
+}
+
+.data-color {
+    color: hsl(64, 100%, 74%);
+}
+
+.data-color.buy {
+    color: hsl(81, 100%, 74%);
+}
+
+.data-color.sell {
+    color: hsl(26, 100%, 74%);
+}
+
+.notifications {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 340px;
+    z-index: 999999;
+}
+
+.toast-dark {
+    background-color: hsla(235, 0%, 60%, .2);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .9);
+}
+
+.toast-dark .toast-header {
+    background-color: hsla(235, 0%, 100%, .9);
+    backdrop-filter: blur(2px);
+    color: #454545;
+}

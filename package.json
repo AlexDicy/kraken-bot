@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.1",
     "got": "^11.8.2",
     "neo-blessed": "^0.2.0",
-    "qs": "^6.9.6"
+    "qs": "^6.9.6",
+    "ws": "^7.4.3"
   }
 }

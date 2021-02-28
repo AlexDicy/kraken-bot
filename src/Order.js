@@ -12,9 +12,9 @@ export default class Order {
     this.openTime = openTime;
   }
 
-  static fromAPI(object) {
+  static fromAPI(object, id = null) {
     return new Order(
-      object.refid,
+      object.refid || id,
       object.descr.pair,
       object.descr.type,
       removeTrailingZero(object.vol),

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dicy Crypto Bot</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400;500;600&display=swap">
+</head>
+<body class="container-lg text-white">
+<div id="app">
+  <h3 class="mt-2">Dashboard</h3>
+  <div class="notifications">
+    <toast v-for="alert in alerts" :text="alert.text" :key="alert.id"></toast>
+  </div>
+  <div class="card card-bg">
+    <div class="card-body">
+      <h4 class="card-title">Open Orders</h4>
+      <table class="card-text table table-dark mono fw-200">
+        <tr>
+          <th>pair</th>
+          <th>type</th>
+          <th>kind</th>
+          <th>volume</th>
+          <th>price</th>
+          <th>time</th>
+        </tr>
+        <tr v-for="(order, index) in orders" :key="index">
+          <td class="data-color">{{ order.pair }}</td>
+          <td class="data-color" :class="order.type">{{ order.type }}</td>
+          <td class="data-color">{{ order.orderType }}</td>
+          <td class="data-color">{{ order.volume }}</td>
+          <td class="data-color">{{ order.price }}</td>
+          <td class="data-color">{{ moment(order.openTime).format("lll") }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md">
+      <div class="card card-bg">
+        <div class="card-body">
+          <h4 class="card-title">Balance</h4>
+          <table class="card-text table table-dark mono fw-200">
+            <tr v-for="(value, index) of balance" :key="index">
+              <th>{{ index == "equivalent" ? "tot." : index }}</th>
+              <td class="data-color">{{ value + (index == "equivalent" ? " €" : "") }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card card-bg">
+        <div class="card-body">
+          <h4 class="card-title">Special title treatment</h4>
+          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="moment.min.js"></script>
+<script src="vue.global.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

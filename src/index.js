@@ -1,14 +1,37 @@
 import blessed from "neo-blessed";
 import Table from "neo-blessed/lib/widgets/table.js";
+
 import KrakenClient from "./kraken.js";
+import express from "express";
+import WebSocket from "ws";
+
 import CachedData from "./CachedData.js";
 import Order from "./Order.js";
 import Bot from "./Bot.js";
 import {Type} from "./Enums.js";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const key = "***REMOVED***";
 const secret = "***REMOVED***";
+
 export const kraken = new KrakenClient(key, secret);
+
+const app = express();
+// handle static web files
+app.use(express.static("src/public"));
+// listen HTTP requests on port 80 (or PORT)
+const server = app.listen(process.env.PORT || 80);
+// create websocket server
+const ws = new WebSocket.Server({noServer: true});
+ws.on("connection", client => sendFetchedData(client));
+// handle websocket via server created by express
+server.on("upgrade", (request, socket, head) => {
+  ws.handleUpgrade(request, socket, head, socket => {
+    ws.emit("connection", socket, request);
+  });
+});
+
 
 // fix broken Table method
 Table.prototype.oSetData = Table.prototype.setData;
@@ -171,7 +194,7 @@ function loadOrders() {
     let orders = [];
     for (let id of Object.keys(open)) {
       let order = open[id];
-      orders.push(Order.fromAPI(order));
+      orders.push(Order.fromAPI(order, id));
     }
     CachedData.orders = orders;
 
@@ -197,12 +220,15 @@ function loadOrders() {
     setStatus("Error: " + error);
   }).finally(() => {
     setStatus("idle");
-    // only run the bot half of the times
-    if (botRunIndex > 2) {
-      Bot.run();
-      botRunIndex = 0;
-    } else {
-      botRunIndex++;
+    sendFetchedData();
+    if (isProduction) {
+      // only run the bot half of the times
+      if (botRunIndex > 2) {
+        Bot.run();
+        botRunIndex = 0;
+      } else {
+        botRunIndex++;
+      }
     }
   });
 }
@@ -215,7 +241,8 @@ setInterval(loadOrders, 10000);
 
 
 export function setStatus(status) {
-  topText.setContent("{bold}Status{/bold}: " + status);
+  let envType = isProduction ? "production" : "development";
+  topText.setContent(`[${envType}] {bold}Status{/bold}: ${status}`);
   screen.render();
 }
 
@@ -227,4 +254,21 @@ export function log(message) {
 
 export function removeTrailingZero(value) {
   return value.replace(/([0-9])[0]+$/, "$1");
+}
+
+function sendMessage(type, data, client = null) {
+  data.type = type;
+  let message = JSON.stringify(data);
+  if (client) {
+    client.send(message);
+  } else {
+    ws.clients.forEach(client => client.send(message));
+  }
+}
+
+function sendFetchedData(client = null) {
+  sendMessage("DATA_FETCHED", {
+    balance: CachedData.balance,
+    orders: CachedData.orders
+  }, client);
 }
