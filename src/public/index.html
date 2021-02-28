@@ -24,7 +24,7 @@
   <div class="card card-bg">
     <div class="card-body">
       <h4 class="card-title">Open Orders</h4>
-      <table class="card-text table table-dark mono fw-200">
+      <table class="card-text table table-responsive table-dark mono fw-200">
         <tr>
           <th>pair</th>
           <th>type</th>
@@ -49,7 +49,7 @@
       <div class="card card-bg">
         <div class="card-body">
           <h4 class="card-title">Balance</h4>
-          <table class="card-text table table-dark mono fw-200">
+          <table class="card-text table table-responsive table-dark mono fw-200">
             <tr v-for="(value, index) of balance" :key="index">
               <th>{{ index == "equivalent" ? "tot." : index.toUpperCase() }}</th>
               <td class="data-color">{{ value + (index == "equivalent" ? " €" : "") }}</td>
@@ -62,7 +62,7 @@
       <div class="card card-bg h-100">
         <div class="card-body">
           <h4 class="card-title">Price</h4>
-          <table class="card-text table table-dark mono fw-200">
+          <table class="card-text table table-responsive table-dark mono fw-200">
             <tr>
               <th>asset</th>
               <th>price</th>
