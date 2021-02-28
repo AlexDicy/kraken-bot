@@ -39,7 +39,8 @@ const app = Vue.createApp({
   mounted() {
     const hostname = window.location.hostname;
     const host = hostname === "localhost" ? hostname + ":80" : window.location.host;
-    const ws = new WebSocket("ws://" + host);
+    const secure = window.location.protocol !== "http:";
+    const ws = new WebSocket((secure ? "wss://" : "ws://") + host);
     ws.addEventListener("error", () => {
       this.alert("Connection error");
     });
