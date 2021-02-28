@@ -21,6 +21,10 @@ table th {
     font-weight: 500;
 }
 
+table tr:last-of-type {
+    border-bottom: 0 solid transparent;
+}
+
 .table-dark {
     --bs-table-bg: transparent;
     --bs-table-striped-bg: hsl(240, 8%, 19%);

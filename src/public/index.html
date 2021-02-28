@@ -47,7 +47,7 @@
           <h4 class="card-title">Balance</h4>
           <table class="card-text table table-dark mono fw-200">
             <tr v-for="(value, index) of balance" :key="index">
-              <th>{{ index == "equivalent" ? "tot." : index }}</th>
+              <th>{{ index == "equivalent" ? "tot." : index.toUpperCase() }}</th>
               <td class="data-color">{{ value + (index == "equivalent" ? " €" : "") }}</td>
             </tr>
           </table>
@@ -55,10 +55,21 @@
       </div>
     </div>
     <div class="col-md">
-      <div class="card card-bg">
+      <div class="card card-bg h-100">
         <div class="card-body">
-          <h4 class="card-title">Special title treatment</h4>
-          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+          <h4 class="card-title">Price</h4>
+          <table class="card-text table table-dark mono fw-200">
+            <tr>
+              <th>asset</th>
+              <th>price</th>
+              <th>24 high</th>
+            </tr>
+            <tr v-for="(value, index) of price" :key="index">
+              <th>{{ index.toUpperCase() }}</th>
+              <td class="data-color">{{ value.a }} €</td>
+              <td class="data-color">{{ high[index] }} €</td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

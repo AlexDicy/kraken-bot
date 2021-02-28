@@ -172,7 +172,7 @@ function loadOrders() {
     return kraken.api("Ticker", {pair: "XXBTZEUR,XETHZEUR,ADAEUR"});
   }).then(resp => {
     setStatus("loading 24h");
-    let data = [["{bold}price{/bold}", "{bold}price{/bold}", "{bold}24h high{/bold}"]];
+    let data = [["{bold}asset{/bold}", "{bold}price{/bold}", "{bold}24h high{/bold}"]];
     for (let asset of CachedData.assets) {
       CachedData.price[asset.var].a = resp.result[asset.pair].a[0];
       CachedData.price[asset.var].b = resp.result[asset.pair].b[0];
@@ -217,6 +217,7 @@ function loadOrders() {
     CachedData.dirty = false;
   }).catch(error => {
     CachedData.dirty = true;
+    sendError(error);
     setStatus("Error: " + error);
   }).finally(() => {
     setStatus("idle");
@@ -266,9 +267,18 @@ function sendMessage(type, data, client = null) {
   }
 }
 
+export function sendError(error, client = null) {
+  sendMessage("ERROR", {
+    error: error
+  }, client);
+}
+
+
 function sendFetchedData(client = null) {
   sendMessage("DATA_FETCHED", {
     balance: CachedData.balance,
-    orders: CachedData.orders
+    orders: CachedData.orders,
+    price: CachedData.price,
+    high: CachedData.high
   }, client);
 }

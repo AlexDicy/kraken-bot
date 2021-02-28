@@ -4,7 +4,9 @@ const app = Vue.createApp({
     return {
       alerts: [],
       balance: {},
-      orders: []
+      orders: [],
+      price: {},
+      high: {}
     };
   },
   methods: {
@@ -44,9 +46,14 @@ const app = Vue.createApp({
     ws.addEventListener("message", m => {
       let message = JSON.parse(m.data);
       switch (message.type) {
+        case "ERROR":
+          this.alert("Error: " + message.error);
+          break;
         case "DATA_FETCHED":
           this.balance = message.balance;
           this.orders = message.orders;
+          this.price = message.price;
+          this.high = message.high;
           break;
       }
     });

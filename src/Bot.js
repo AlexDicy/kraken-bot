@@ -1,5 +1,5 @@
 import CachedData from "./CachedData.js";
-import {kraken, log, setStatus} from "./index.js";
+import {kraken, log, sendError, setStatus} from "./index.js";
 import {OrderType, Type} from "./Enums.js";
 
 export default class Bot {
@@ -67,6 +67,7 @@ export default class Bot {
           log("-> BUY " + volume + " @ " + currentPrice);
         }).catch(error => {
           // could not create buy order, just skip
+          sendError(error);
           log("{red-fg}ERROR:{/red-fg} " + error);
           log("could not create BUY order, skipping");
           log("placing a sell order just in case");
@@ -77,6 +78,7 @@ export default class Bot {
               log("-> SELL " + volume + " @ " + sellPrice);
             }).catch(error => {
               // could not create sell order, try again in 2 seconds
+              sendError(error);
               log("{red-fg}ERROR:{/red-fg} " + error);
               log("retrying sell order in 5 seconds...");
               // try again
@@ -84,6 +86,7 @@ export default class Bot {
                 kraken.api("AddOrder", sellParams).then(() => {
                   log("retry successful");
                 }).catch(error => {
+                  sendError(error);
                   // this is a fatal error and should be notified
                   log("COULD NOT CREATE SELL ORDER: " + error)
                 });
