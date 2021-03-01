@@ -53,8 +53,8 @@ export default class CachedData {
       maxDecimals: 1, // how many decimals we can use in orders
       lotDecimals: 8, // volume values
       var: "xbt",
-      tradeValue: 70,
-      maxTrades: 7
+      tradeValue: 120,
+      maxTrades: 4
     },
     {
       name: "ETH",
