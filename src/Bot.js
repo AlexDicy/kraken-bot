@@ -48,7 +48,7 @@ export default class Bot {
       let highPrice = lowestOrder == null ? CachedData.high[asset.var] : (lowestOrder.price / 1.02);
       let difference = currentPrice - highPrice;
       let percentage = (difference / highPrice) * 100;
-      let color = percentage >= 0 ? "#9ABF22-fg" : "#BF6B22-fg";
+      let color = percentage >= 0 ? "#D1FF7A-fg" : "#FFB47A-fg";
       log(`[${openOrders}/${asset.maxTrades}] {bold}${asset.name}{/bold}: {${color}}`
         + `${percentage.toFixed(2)}%{/${color}} ${lowestOrder != null ? "last order" : "24h high"}`);
 
