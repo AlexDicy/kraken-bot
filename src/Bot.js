@@ -44,7 +44,7 @@ export default class Bot {
       log(`[${openOrders}/${asset.maxTrades}] {bold}${asset.name}{/bold}: {${color}}`
         + `${percentage.toFixed(2)}%{/${color}} ${lowestOrder != null ? "last order" : "24h high"}`);
 
-      if (percentage <= -2 && openOrders <= asset.maxTrades) {
+      if (percentage <= -2 && openOrders < asset.maxTrades) {
         // start creating order
         let volume = (asset.tradeValue / currentPrice).toFixed(asset.lotDecimals);
         let sellPrice = (currentPrice * 1.02).toFixed(asset.maxDecimals);
