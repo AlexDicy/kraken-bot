@@ -15,7 +15,7 @@ const key = "***REMOVED***";
 const secret = "***REMOVED***";
 
 export const kraken = new KrakenClient(key, secret);
-// save the last 200 logs sent to websockets
+// save the last 1000 logs sent to websockets
 const sentLogs = [];
 // setup the HTTP server
 const app = express();
@@ -151,7 +151,7 @@ export function log(message, sendWS = true) {
     sendMessage("LOG", {
       text: message
     });
-    if (sentLogs.length >= 200) {
+    if (sentLogs.length >= 1000) {
       sentLogs.shift();
     }
     sentLogs.push({
