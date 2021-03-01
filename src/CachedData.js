@@ -92,7 +92,7 @@ export default class CachedData {
       pairAlias: "DASHEUR",
       maxDecimals: 3,
       lotDecimals: 8,
-      var: "ada",
+      var: "dash",
       tradeValue: 40,
       maxTrades: 3
     }
