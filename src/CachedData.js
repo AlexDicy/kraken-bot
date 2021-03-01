@@ -76,7 +76,7 @@ export default class CachedData {
       lotDecimals: 8,
       var: "ada",
       tradeValue: 40, // keep in mind that the minimum volume for ADA is 25
-      maxTrades: 3 // 0 for pause
+      maxTrades: 1 // 0 for pause
     }
   ];
 }
