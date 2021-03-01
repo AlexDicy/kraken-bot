@@ -38,6 +38,20 @@ const app = Vue.createApp({
         }
       }, time * 1000);
     },
+    addLog(log) {
+      if (this.log.length > 100000) {
+        this.log = this.log.substring(0, 50000);
+      }
+      // escape HTML chars
+      let text = this.escapeHtml(log.text);
+      // set colors
+      text = text.replace(/{(#[a-zA-Z0-9]+)-fg}([\S ]+?){\/(#[a-zA-Z0-9]+)-fg}/g, "<span style=\"color: $1\">$2</span>");
+      // set bold
+      text = text.replace(/{bold}([\S ]+?){\/bold}/g, "<strong>$1</strong>");
+      // remove other tags
+      text = text.replace(/{[a-zA-Z0-9#\-_]+}([\S ]+?){\/[a-zA-Z0-9#\-_]+}/g, "$1");
+      this.log = `[${moment(log.data).format("LTS")}] ${text}\n` + this.log;
+    },
     escapeHtml(unsafe) {
       return unsafe
         .replace(/&/g, "&amp;")
@@ -53,7 +67,6 @@ const app = Vue.createApp({
       const ws = new WebSocket((secure ? "wss://" : "ws://") + host);
       ws.addEventListener("error", () => {
         this.alert("Connection error");
-        //ws.close();
       });
       ws.addEventListener("close", () => {
         this.alert("Disconnected from server, reconnecting");
@@ -66,15 +79,12 @@ const app = Vue.createApp({
             this.alert("Error: " + message.error);
             break;
           case "LOG":
-            // escape HTML chars
-            let text = this.escapeHtml(message.text);
-            // set colors
-            text = text.replace(/{(#[a-zA-Z0-9]+)-fg}([\S ]+?){\/(#[a-zA-Z0-9]+)-fg}/g, "<span style=\"color: $1\">$2</span>");
-            // set bold
-            text = text.replace(/{bold}([\S ]+?){\/bold}/g, "<strong>$1</strong>");
-            // remove other tags
-            text = text.replace(/{[a-zA-Z0-9#\-_]+}([\S ]+?){\/[a-zA-Z0-9#\-_]+}/g, "$1");
-            this.log = `[${moment(message.data).format("LTS")}] ${text}\n` + this.log;
+            this.addLog(message);
+            break;
+          case "PREVIOUS_LOGS":
+            for (let log of message.logs) {
+              this.addLog(log);
+            }
             break;
           case "DATA_FETCHED":
             this.balance = message.balance;

@@ -15,7 +15,9 @@ const key = "***REMOVED***";
 const secret = "***REMOVED***";
 
 export const kraken = new KrakenClient(key, secret);
-
+// save the last 200 logs sent to websockets
+const sentLogs = [];
+// setup the HTTP server
 const app = express();
 // handle static web files
 app.use(express.static("src/public"));
@@ -23,7 +25,10 @@ app.use(express.static("src/public"));
 const server = app.listen(process.env.PORT || 80);
 // create websocket server
 const ws = new WebSocket.Server({noServer: true});
-ws.on("connection", client => sendFetchedData(client));
+ws.on("connection", client => {
+  sendFetchedData(client);
+  sendMessage("PREVIOUS_LOGS", {logs: sentLogs}, client);
+});
 // handle websocket via server created by express
 server.on("upgrade", (request, socket, head) => {
   ws.handleUpgrade(request, socket, head, socket => {
@@ -144,6 +149,13 @@ export function log(message, sendWS = true) {
   screen.render();
   if (sendWS) {
     sendMessage("LOG", {
+      text: message
+    });
+    if (sentLogs.length >= 200) {
+      sentLogs.shift();
+    }
+    sentLogs.push({
+      date: new Date(),
       text: message
     });
   }
