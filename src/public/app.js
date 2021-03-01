@@ -69,9 +69,9 @@ const app = Vue.createApp({
             // escape HTML chars
             let text = this.escapeHtml(message.text);
             // set colors
-            text = text.replace(/{(#[a-zA-Z0-9]+)-fg}([\S ]+?){\/(#[a-zA-Z0-9]+)-fg}g/, "<span color=\"$1\">$2</span>");
+            text = text.replace(/{(#[a-zA-Z0-9]+)-fg}([\S ]+?){\/(#[a-zA-Z0-9]+)-fg}/g, "<span color=\"$1\">$2</span>");
             // set bold
-            text = text.replace(/{bold}([\S ]+?){\/bold}g/, "<strong>$1</strong>");
+            text = text.replace(/{bold}([\S ]+?){\/bold}/g, "<strong>$1</strong>");
             // remove other tags
             text = text.replace(/{[a-zA-Z0-9#\-_]+}([\S ]+?){\/[a-zA-Z0-9#\-_]+}/g, "$1");
             this.log = `[${moment(message.data).format("LTS")}] ${text}\n` + this.log;
