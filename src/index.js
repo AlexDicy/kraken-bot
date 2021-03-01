@@ -8,7 +8,7 @@ import WebSocket from "ws";
 import CachedData from "./CachedData.js";
 import Order from "./Order.js";
 import Bot from "./Bot.js";
-import {Type} from "./Enums.js";
+import {OrderType, Type} from "./Enums.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -251,6 +251,9 @@ export function log(message) {
   logText.insertBottom(message);
   logText.setScrollPerc(100);
   screen.render();
+  sendMessage("LOG", {
+    text: message
+  });
 }
 
 export function removeTrailingZero(value) {
@@ -276,6 +279,12 @@ export function sendError(error, client = null) {
   }, client);
 }
 
+export function sendOrder(asset, params, client = null) {
+  sendMessage("ORDER", {
+    asset: asset,
+    params: params
+  }, client);
+}
 
 function sendFetchedData(client = null) {
   sendMessage("DATA_FETCHED", {

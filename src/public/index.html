@@ -16,7 +16,7 @@
   <meta property="og:description" content="Bot's Dashboard and price status"/>
 </head>
 <body class="container-lg text-white">
-<div id="app">
+<div id="app" class="mb-5">
   <h3 class="mt-2">Dashboard</h3>
   <div class="notifications">
     <toast v-for="alert in alerts" :text="alert.text" :key="alert.id"></toast>
@@ -78,8 +78,14 @@
       </div>
     </div>
   </div>
+  <div class="card card-bg mt-4">
+    <div class="card-body table-responsive">
+      <h4 class="card-title">Log</h4>
+      <pre class="mono fw-200 mb-0 log-container">{{ log }}</pre>
+    </div>
+  </div>
 </div>
-<script src="assets/moment.min.js"></script>
+<script src="assets/moment-with-locales.min.js"></script>
 <script src="assets/vue.global.js"></script>
 <script src="app.js"></script>
 </body>

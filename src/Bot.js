@@ -1,5 +1,5 @@
 import CachedData from "./CachedData.js";
-import {kraken, log, sendError, setStatus} from "./index.js";
+import {kraken, log, sendError, sendOrder, setStatus} from "./index.js";
 import {OrderType, Type} from "./Enums.js";
 
 export default class Bot {
@@ -65,6 +65,7 @@ export default class Bot {
         // create buy order
         await kraken.api("AddOrder", buyParams).then(() => {
           log("-> BUY " + volume + " @ " + currentPrice);
+          sendOrder(asset, buyParams);
         }).catch(error => {
           // could not create buy order, just skip
           sendError(error);
@@ -76,6 +77,7 @@ export default class Bot {
           setTimeout(() => {
             kraken.api("AddOrder", sellParams).then(() => {
               log("-> SELL " + volume + " @ " + sellPrice);
+              sendOrder(asset, sellParams);
             }).catch(error => {
               // could not create sell order, try again in 2 seconds
               sendError(error);
@@ -85,6 +87,7 @@ export default class Bot {
               setTimeout(() => {
                 kraken.api("AddOrder", sellParams).then(() => {
                   log("retry successful");
+                  sendOrder(asset, sellParams);
                 }).catch(error => {
                   sendError(error);
                   // this is a fatal error and should be notified

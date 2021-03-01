@@ -1,8 +1,11 @@
+// set moment.js locale
+moment.locale(window.navigator.language);
 // create Vue instance
 const app = Vue.createApp({
   data() {
     return {
       alerts: [],
+      log: "",
       balance: {},
       orders: [],
       price: {},
@@ -34,30 +37,50 @@ const app = Vue.createApp({
           this.alerts.splice(position, 1);
         }
       }, time * 1000);
+    },
+    connectWS() {
+      const hostname = window.location.hostname;
+      const host = hostname === "localhost" ? hostname + ":80" : window.location.host;
+      const secure = window.location.protocol !== "http:";
+      const ws = new WebSocket((secure ? "wss://" : "ws://") + host);
+      ws.addEventListener("error", () => {
+        this.alert("Connection error");
+        //ws.close();
+      });
+      ws.addEventListener("close", () => {
+        this.alert("Disconnected from server, reconnecting");
+        setTimeout(this.connectWS, 1000);
+      });
+      ws.addEventListener("message", m => {
+        let message = JSON.parse(m.data);
+        switch (message.type) {
+          case "ERROR":
+            this.alert("Error: " + message.error);
+            break;
+          case "LOG":
+            this.log = `[${moment(message.data).format("LTS")}] ${message.text}\n` + this.log;
+            break;
+          case "DATA_FETCHED":
+            this.balance = message.balance;
+            this.orders = message.orders;
+            this.price = message.price;
+            this.high = message.high;
+            break;
+          case "ORDER":
+            const asset = message.asset;
+            const params = message.params;
+            let alert = `${params.type.toUpperCase()} ${params.volume} ${asset.name}`;
+            if (params.price) {
+              alert += " @ " + params.price;
+            }
+            this.alert(alert);
+            break;
+        }
+      });
     }
   },
   mounted() {
-    const hostname = window.location.hostname;
-    const host = hostname === "localhost" ? hostname + ":80" : window.location.host;
-    const secure = window.location.protocol !== "http:";
-    const ws = new WebSocket((secure ? "wss://" : "ws://") + host);
-    ws.addEventListener("error", () => {
-      this.alert("Connection error");
-    });
-    ws.addEventListener("message", m => {
-      let message = JSON.parse(m.data);
-      switch (message.type) {
-        case "ERROR":
-          this.alert("Error: " + message.error);
-          break;
-        case "DATA_FETCHED":
-          this.balance = message.balance;
-          this.orders = message.orders;
-          this.price = message.price;
-          this.high = message.high;
-          break;
-      }
-    });
+    this.connectWS();
   }
 });
 
