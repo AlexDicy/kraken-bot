@@ -58,7 +58,8 @@ const app = Vue.createApp({
             this.alert("Error: " + message.error);
             break;
           case "LOG":
-            this.log = `[${moment(message.data).format("LTS")}] ${message.text}\n` + this.log;
+            let text = message.text.replace(/{[a-zA-Z0-9#\-_]+}([\S ]+?){\/[a-zA-Z0-9#\-_]+}/g, "$1");
+            this.log = `[${moment(message.data).format("LTS")}] ${text}\n` + this.log;
             break;
           case "DATA_FETCHED":
             this.balance = message.balance;
