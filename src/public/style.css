@@ -19,6 +19,10 @@ html, body {
     background: hsl(235, 28%, 38%);
 }
 
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 .mono {
     font-family: "JetBrains Mono", monospace;
 }
