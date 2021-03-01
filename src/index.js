@@ -1,6 +1,5 @@
-import blessed from "neo-blessed";
-import Table from "neo-blessed/lib/widgets/table.js";
-
+import exitHook from "async-exit-hook";
+import {screen, avgTable, infoTable, ordersTable, topText, logText} from "./terminal.js";
 import KrakenClient from "./kraken.js";
 import express from "express";
 import WebSocket from "ws";
@@ -8,7 +7,7 @@ import WebSocket from "ws";
 import CachedData from "./CachedData.js";
 import Order from "./Order.js";
 import Bot from "./Bot.js";
-import {OrderType, Type} from "./Enums.js";
+import {Type} from "./Enums.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -32,117 +31,9 @@ server.on("upgrade", (request, socket, head) => {
   });
 });
 
-
-// fix broken Table method
-Table.prototype.oSetData = Table.prototype.setData;
-Table.prototype.setData = function (rows) {
-  if (rows instanceof Array) {
-    for (let row of rows) {
-      row[0] = " " + row[0];
-    }
-  }
-  this.oSetData(rows);
-};
-
-const screen = blessed.screen({autoPadding: true, dockBorders: true});
-const topText = blessed.text({
-  parent: screen,
-  width: "100%",
-  tags: true,
-  border: "line",
-  padding: {left: 1},
-  style: {
-    border: {
-      fg: "#508ad6"
-    }
-  }
-});
-const infoTable = blessed.table({
-  parent: screen,
-  top: 2,
-  width: 25,
-  noCellBorders: true,
-  border: "line",
-  scrollable: true,
-  align: "left",
-  tags: true,
-  style: {
-    border: {
-      fg: "#508ad6"
-    },
-    header: {
-      fg: "#9abf22"
-    },
-    cell: {
-      fg: "#9abf22"
-    }
-  }
-});
-const avgTable = blessed.table({
-  parent: screen,
-  top: 2,
-  left: 25 - 1,
-  width: 45,
-  noCellBorders: true,
-  border: "line",
-  scrollable: true,
-  align: "left",
-  tags: true,
-  padding: {
-    left: 1,
-    right: -1
-  },
-  style: {
-    border: {
-      fg: "#508ad6"
-    },
-    header: {
-      fg: "#9abf22"
-    },
-    cell: {
-      fg: "#9abf22"
-    }
-  }
-});
-const ordersTable = blessed.table({
-  parent: screen,
-  top: 2,
-  left: 70 - 2,
-  width: 42,
-  noCellBorders: true,
-  border: "line",
-  scrollable: true,
-  align: "left",
-  tags: true,
-  style: {
-    border: {
-      fg: "#508ad6"
-    },
-    header: {
-      bold: true
-    },
-    cell: {
-      fg: "#9abf22"
-    }
-  }
-});
-const logText = blessed.box({
-  parent: screen,
-  top: 2,
-  left: 112 - 3,
-  right: 0,
-  content: "{bold}Welcome to DicyDev Kraken Bot{/bold}",
-  border: "line",
-  scrollable: true,
-  padding: {left: 1},
-  tags: true,
-  style: {
-    border: {
-      fg: "#508ad6"
-    }
-  }
-});
-
+//
+// checker logic
+//
 let botRunIndex = 0;
 
 // +4 on the rate counter
@@ -238,7 +129,7 @@ function loadOrders() {
 setStatus("starting");
 loadOrders();
 // can be called every > 8 seconds for the rate counter
-setInterval(loadOrders, 10000);
+const loopId = setInterval(loadOrders, 10000);
 
 
 export function setStatus(status) {
@@ -296,3 +187,29 @@ function sendFetchedData(client = null) {
     high: CachedData.high
   }, client);
 }
+
+//
+// welcome message to users that connect within 2 seconds
+//
+setTimeout(() => {
+  sendMessage("LOG", {text: "{bold}The bot has started successfully{/bold}"});
+}, 2000);
+
+//
+// run on exit
+//
+exitHook(exitCallback => {
+  sendMessage("LOG", {text: "{bold}Bot is closing{/bold}"});
+  clearImmediate(loopId);
+  let waitTime = 0;
+  if (Bot.isRunning) {
+    waitTime += Bot.sellWaitTime;
+  }
+  if (Bot.isRetrying) {
+    waitTime += Bot.sellRetryTime;
+  }
+  setTimeout(() => {
+    sendMessage("LOG", {text: "{bold}Bot successfully shutdown{/bold}"});
+    exitCallback();
+  }, waitTime);
+});

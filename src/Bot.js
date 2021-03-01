@@ -3,11 +3,19 @@ import {kraken, log, sendError, sendOrder, setStatus} from "./index.js";
 import {OrderType, Type} from "./Enums.js";
 
 export default class Bot {
+  static isRunning = false;
+  static isRetrying = false;
+
+  static sellWaitTime = 10000;
+  static sellRetryTime = 5000;
+
   static async run() {
     if (CachedData.dirty) {
       setStatus("Cached Data is dirty, bot not running");
+      log("Fetched data is dirty, bot not running");
       return;
     }
+    this.isRunning = true;
     log("{#BFAA22-fg}-> bot checks running...{/#BFAA22-fg}");
 
     // controllare se esiste già un ordine nelle ultime 12h
@@ -74,8 +82,10 @@ export default class Bot {
           log("placing a sell order just in case");
         }).then(() => {
           // create sell order after 10 seconds
+          this.isRetrying = true;
           setTimeout(() => {
             kraken.api("AddOrder", sellParams).then(() => {
+              this.isRetrying = false;
               log("-> SELL " + volume + " @ " + sellPrice);
               sendOrder(asset, sellParams);
             }).catch(error => {
@@ -92,13 +102,14 @@ export default class Bot {
                   sendError(error);
                   // this is a fatal error and should be notified
                   log("COULD NOT CREATE SELL ORDER: " + error)
-                });
-              }, 5000);
+                }).finally(() => this.isRetrying = false);
+              }, this.sellRetryTime);
             });
-          }, 10000);
+          }, this.sellWaitTime);
         });
       }
     }
+    this.isRunning = false;
     log("{#BFAA22-fg}-> bot finished.{/#BFAA22-fg}");
   }
 }
