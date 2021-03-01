@@ -38,6 +38,14 @@ const app = Vue.createApp({
         }
       }, time * 1000);
     },
+    escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    },
     connectWS() {
       const hostname = window.location.hostname;
       const host = hostname === "localhost" ? hostname + ":80" : window.location.host;
@@ -58,7 +66,14 @@ const app = Vue.createApp({
             this.alert("Error: " + message.error);
             break;
           case "LOG":
-            let text = message.text.replace(/{[a-zA-Z0-9#\-_]+}([\S ]+?){\/[a-zA-Z0-9#\-_]+}/g, "$1");
+            // escape HTML chars
+            let text = this.escapeHtml(message.text);
+            // set colors
+            text = text.replace(/{(#[a-zA-Z0-9]+)-fg}([\S ]+?){\/(#[a-zA-Z0-9]+)-fg}g/, "<span color=\"$1\">$2</span>");
+            // set bold
+            text = text.replace(/{bold}([\S ]+?){\/bold}g/, "<strong>$1</strong>");
+            // remove other tags
+            text = text.replace(/{[a-zA-Z0-9#\-_]+}([\S ]+?){\/[a-zA-Z0-9#\-_]+}/g, "$1");
             this.log = `[${moment(message.data).format("LTS")}] ${text}\n` + this.log;
             break;
           case "DATA_FETCHED":
