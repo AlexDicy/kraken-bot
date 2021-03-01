@@ -16,7 +16,7 @@ export default class Bot {
       return;
     }
     this.isRunning = true;
-    log("{#BFAA22-fg}-> bot checks running...{/#BFAA22-fg}");
+    log("{#F6FF7A-fg}-> bot checks running...{/#F6FF7A-fg}");
 
     // controllare se esiste già un ordine nelle ultime 12h
     // e prendo quello acquistato al prezzo più basso
@@ -110,6 +110,6 @@ export default class Bot {
       }
     }
     this.isRunning = false;
-    log("{#BFAA22-fg}-> bot finished.{/#BFAA22-fg}");
+    log("{#F6FF7A-fg}-> bot finished.{/#F6FF7A-fg}");
   }
 }

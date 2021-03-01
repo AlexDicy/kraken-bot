@@ -98,7 +98,7 @@ function loadOrders() {
     for (let order of CachedData.orders) {
       data.push([
         order.pair,
-        order.type === Type.BUY ? "buy" : "{#BFAA22-fg}sell{/#BFAA22-fg}",
+        order.type === Type.BUY ? "{#D1FF7A-fg}buy{/#D1FF7A-fg}" : "{#F6FF7A-fg}sell{/#F6FF7A-fg}",
         order.volume,
         order.price
       ]);
