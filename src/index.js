@@ -47,10 +47,11 @@ function loadOrders() {
   setStatus("loading orders");
   // +1 on the rate counter
   kraken.api("Balance").then(resp => {
-    CachedData.balance.eur = resp.result["ZEUR"];
-    CachedData.balance.xbt = resp.result["XXBT"];
-    CachedData.balance.eth = resp.result["XETH"];
-    CachedData.balance.ada = resp.result["ADA"];
+    CachedData.balance.eur = resp.result["ZEUR"] || "0";
+    CachedData.balance.xbt = resp.result["XXBT"] || "0";
+    CachedData.balance.eth = resp.result["XETH"] || "0";
+    CachedData.balance.ada = resp.result["ADA"] || "0";
+    CachedData.balance.dash = resp.result["DASH"] || "0";
     // +1 on the rate counter
     return kraken.api("TradeBalance", {asset: "EUR"});
   }).then(resp => {
@@ -61,11 +62,12 @@ function loadOrders() {
       ["{bold}EUR{/bold}", removeTrailingZero(CachedData.balance.eur)],
       ["{bold}XBT{/bold}", removeTrailingZero(CachedData.balance.xbt)],
       ["{bold}ETH{/bold}", removeTrailingZero(CachedData.balance.eth)],
-      ["{bold}ADA{/bold}", removeTrailingZero(CachedData.balance.ada)]
+      ["{bold}ADA{/bold}", removeTrailingZero(CachedData.balance.ada)],
+      ["{bold}DASH{/bold}", removeTrailingZero(CachedData.balance.dash)]
     ];
     infoTable.setData(info);
     // +2 on the rate counter
-    return kraken.api("Ticker", {pair: "XXBTZEUR,XETHZEUR,ADAEUR"});
+    return kraken.api("Ticker", {pair: "XXBTZEUR,XETHZEUR,ADAEUR,DASHEUR"});
   }).then(resp => {
     setStatus("loading 24h");
     let data = [["{bold}asset{/bold}", "{bold}price{/bold}", "{bold}24h high{/bold}"]];
@@ -108,6 +110,7 @@ function loadOrders() {
     // get asset ticker for XBT, ETH and ADA
     setStatus("loading ticker");
   }).then(() => {
+    setStatus("idle");
     log("data fetched successfully", false);
     // data has been loaded successfully, set as non-dirty
     CachedData.dirty = false;
@@ -116,7 +119,6 @@ function loadOrders() {
     sendError(error);
     setStatus("Error: " + error);
   }).finally(() => {
-    setStatus("idle");
     sendFetchedData();
     if (isProduction) {
       // only run the bot half of the times

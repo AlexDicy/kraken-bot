@@ -9,7 +9,8 @@ export default class CachedData {
     eur: 0,
     xbt: 0,
     eth: 0,
-    ada: 0
+    ada: 0,
+    dash: 0
   };
 
   // last price
@@ -25,6 +26,10 @@ export default class CachedData {
     ada: {
       a: 0,
       b: 0
+    },
+    dash: {
+      a: 0,
+      b: 0
     }
   };
 
@@ -32,13 +37,15 @@ export default class CachedData {
   static average = {
     xbt: 0,
     eth: 0,
-    ada: 0
+    ada: 0,
+    dash: 0
   };
   // price 24h high
   static high = {
     xbt: 0,
     eth: 0,
-    ada: 0
+    ada: 0,
+    dash: 0
   };
 
   /** @type Order[] */
@@ -77,6 +84,17 @@ export default class CachedData {
       var: "ada",
       tradeValue: 40, // keep in mind that the minimum volume for ADA is 25
       maxTrades: 1 // 0 for pause
+    },
+    {
+      name: "DASH",
+      asset: "DASH",
+      pair: "DASHEUR",
+      pairAlias: "DASHEUR",
+      maxDecimals: 3,
+      lotDecimals: 8,
+      var: "ada",
+      tradeValue: 40,
+      maxTrades: 3
     }
   ];
 }
