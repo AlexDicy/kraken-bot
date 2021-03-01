@@ -94,7 +94,7 @@ export default class CachedData {
       lotDecimals: 8,
       var: "dash",
       tradeValue: 40,
-      maxTrades: 3
+      maxTrades: 2
     }
   ];
 }
