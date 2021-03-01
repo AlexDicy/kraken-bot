@@ -147,7 +147,7 @@ let botRunIndex = 0;
 
 // +4 on the rate counter
 function loadOrders() {
-  log("started fetching data");
+  log("started fetching data", false);
   setStatus("loading orders");
   // +1 on the rate counter
   kraken.api("Balance").then(resp => {
@@ -212,7 +212,7 @@ function loadOrders() {
     // get asset ticker for XBT, ETH and ADA
     setStatus("loading ticker");
   }).then(() => {
-    log("data fetched successfully");
+    log("data fetched successfully", false);
     // data has been loaded successfully, set as non-dirty
     CachedData.dirty = false;
   }).catch(error => {
@@ -247,13 +247,15 @@ export function setStatus(status) {
   screen.render();
 }
 
-export function log(message) {
+export function log(message, sendWS = true) {
   logText.insertBottom(message);
   logText.setScrollPerc(100);
   screen.render();
-  sendMessage("LOG", {
-    text: message
-  });
+  if (sendWS) {
+    sendMessage("LOG", {
+      text: message
+    });
+  }
 }
 
 export function removeTrailingZero(value) {
