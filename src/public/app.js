@@ -50,7 +50,7 @@ const app = Vue.createApp({
       text = text.replace(/{bold}([\S ]+?){\/bold}/g, "<strong>$1</strong>");
       // remove other tags
       text = text.replace(/{[a-zA-Z0-9#\-_]+}([\S ]+?){\/[a-zA-Z0-9#\-_]+}/g, "$1");
-      this.log = `[${moment(log.date || null).format("LTS")}] ${text}\n` + this.log;
+      this.log = `[${moment(log.date || Date.now()).format("LTS")}] ${text}\n` + this.log;
     },
     escapeHtml(unsafe) {
       return unsafe
