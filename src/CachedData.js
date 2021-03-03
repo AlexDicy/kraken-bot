@@ -60,8 +60,8 @@ export default class CachedData {
       maxDecimals: 1, // how many decimals we can use in orders
       lotDecimals: 8, // volume values
       var: "xbt",
-      tradeValue: 120,
-      maxTrades: 4
+      tradeValue: 150,
+      maxTrades: 3
     },
     {
       name: "ETH",
@@ -71,8 +71,8 @@ export default class CachedData {
       maxDecimals: 2,
       lotDecimals: 8,
       var: "eth",
-      tradeValue: 50,
-      maxTrades: 4
+      tradeValue: 70,
+      maxTrades: 3
     },
     {
       name: "ADA",
@@ -93,7 +93,7 @@ export default class CachedData {
       maxDecimals: 3,
       lotDecimals: 8,
       var: "dash",
-      tradeValue: 40,
+      tradeValue: 50,
       maxTrades: 2
     }
   ];
