@@ -18,10 +18,6 @@ export default class Bot {
     this.isRunning = true;
     log("{#F6FF7A-fg}-> bot checks running...{/#F6FF7A-fg}");
 
-    // controllare se esiste già un ordine nelle ultime 12h
-    // e prendo quello acquistato al prezzo più basso
-    // altrimenti uso il prezzo altro 24h
-    // se il prezzo è sotto il 2% compro.
     for (let asset of CachedData.assets) {
       // skip asset if max trades is 0
       if (asset.maxTrades <= 0) {
