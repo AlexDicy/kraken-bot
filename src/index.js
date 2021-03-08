@@ -54,7 +54,7 @@ function loadOrders() {
   kraken.api("Balance").then(resp => {
     CachedData.balance.eur = resp.result["ZEUR"] || "0";
     for (let asset of CachedData.assets) {
-      CachedData.balance[asset.var] = resp.result[asset.asset] || "0";
+      CachedData.balance[asset.name] = resp.result[asset.asset] || "0";
     }
     // +1 on the rate counter
     return kraken.api("TradeBalance", {asset: "EUR"});
@@ -66,7 +66,7 @@ function loadOrders() {
       ["{bold}EUR{/bold}", removeTrailingZero(CachedData.balance.eur)]
     ];
     for (let asset of CachedData.assets) {
-      info.push(["{bold}" + asset.name + "{/bold}", removeTrailingZero(CachedData.balance[asset.var])]);
+      info.push(["{bold}" + asset.name + "{/bold}", removeTrailingZero(CachedData.balance[asset.name])]);
     }
     infoTable.setData(info);
     // build the assets pair string
@@ -79,16 +79,16 @@ function loadOrders() {
     setStatus("loading 24h");
     let data = [["{bold}asset{/bold}", "{bold}price{/bold}", "{bold}24h high{/bold}"]];
     for (let asset of CachedData.assets) {
-      CachedData.price[asset.var] = {};
-      CachedData.price[asset.var].a = resp.result[asset.pair].a[0];
-      CachedData.price[asset.var].b = resp.result[asset.pair].b[0];
-      CachedData.average[asset.var] = resp.result[asset.pair].p[1];
-      CachedData.high[asset.var] = resp.result[asset.pair].h[1];
+      CachedData.price[asset.name] = {};
+      CachedData.price[asset.name].a = resp.result[asset.pair].a[0];
+      CachedData.price[asset.name].b = resp.result[asset.pair].b[0];
+      CachedData.average[asset.name] = resp.result[asset.pair].p[1];
+      CachedData.high[asset.name] = resp.result[asset.pair].h[1];
 
       data.push([
         `{bold}${asset.name}{/bold}`,
-        removeTrailingZero(CachedData.price[asset.var].a) + " €",
-        removeTrailingZero(CachedData.high[asset.var]) + " €"
+        removeTrailingZero(CachedData.price[asset.name].a) + " €",
+        removeTrailingZero(CachedData.high[asset.name]) + " €"
       ]);
     }
 

@@ -39,9 +39,9 @@ export default class Bot {
         }
       }
 
-      let currentPrice = CachedData.price[asset.var].a;
+      let currentPrice = CachedData.price[asset.name].a;
 
-      let highPrice = lowestOrder == null ? CachedData.high[asset.var] : (lowestOrder.price / 1.02);
+      let highPrice = lowestOrder == null ? CachedData.high[asset.name] : (lowestOrder.price / 1.02);
       let difference = currentPrice - highPrice;
       let percentage = (difference / highPrice) * 100;
       let color = percentage >= 0 ? "#D1FF7A-fg" : "#FFB47A-fg";

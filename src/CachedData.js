@@ -34,7 +34,6 @@ export default class CachedData {
       pairAlias: "XBTEUR", // used in orders
       maxDecimals: 1, // how many decimals we can use in orders
       lotDecimals: 8, // volume values
-      var: "xbt",
       tradeValue: 150,
       maxTrades: 3
     },
@@ -45,7 +44,6 @@ export default class CachedData {
       pairAlias: "ETHEUR",
       maxDecimals: 2,
       lotDecimals: 8,
-      var: "eth",
       tradeValue: 70,
       maxTrades: 3
     },
@@ -56,20 +54,28 @@ export default class CachedData {
       pairAlias: "ADAEUR",
       maxDecimals: 6,
       lotDecimals: 8,
-      var: "ada",
       tradeValue: 40, // keep in mind that the minimum volume for ADA is 25
       maxTrades: 1 // 0 for pause
     },
     {
-      name: "DASH",
-      asset: "DASH",
-      pair: "DASHEUR",
-      pairAlias: "DASHEUR",
+      name: "DOT",
+      asset: "DOT",
+      pair: "DOTEUR",
+      pairAlias: "DOTEUR",
+      maxDecimals: 4,
+      lotDecimals: 8,
+      tradeValue: 70,
+      maxTrades: 3
+    },
+    {
+      name: "UNI",
+      asset: "UNI",
+      pair: "UNIEUR",
+      pairAlias: "UNIEUR",
       maxDecimals: 3,
       lotDecimals: 8,
-      var: "dash",
-      tradeValue: 50,
-      maxTrades: 2
+      tradeValue: 70,
+      maxTrades: 3
     }
   ];
 }
