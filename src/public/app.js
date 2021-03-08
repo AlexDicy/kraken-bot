@@ -39,8 +39,8 @@ const app = Vue.createApp({
       }, time * 1000);
     },
     addLog(log) {
-      if (this.log.length > 100000) {
-        this.log = this.log.substring(0, 50000);
+      if (this.log.length > 1000000) {
+        this.log = this.log.substring(0, 800000);
       }
       // escape HTML chars
       let text = this.escapeHtml(log.text);
