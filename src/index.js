@@ -27,7 +27,7 @@ const app = express();
 // handle static web files
 app.use(express.static("src/public"));
 // listen HTTP requests on port 80 (or PORT)
-const server = app.listen(process.env.PORT || 80);
+const server = app.listen(process.env.PORT || 3400);
 // create websocket server
 const ws = new WebSocket.Server({noServer: true});
 ws.on("connection", client => {
