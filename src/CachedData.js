@@ -5,16 +5,13 @@ export default class CachedData {
   static dirty = true;
 
   static balance = {
-    equivalent: 0, // in EUR
-    eur: 0,
-    xbt: 0,
-    eth: 0,
-    ada: 0,
-    dash: 0
+    equivalent: 0 // in EUR
+    // additional keys are set during runtime
   };
 
   // last price
   static price = {
+    // keys are set during runtime
     xbt: {
       a: 0,
       b: 0

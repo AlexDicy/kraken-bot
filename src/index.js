@@ -53,10 +53,9 @@ function loadOrders() {
   // +1 on the rate counter
   kraken.api("Balance").then(resp => {
     CachedData.balance.eur = resp.result["ZEUR"] || "0";
-    CachedData.balance.xbt = resp.result["XXBT"] || "0";
-    CachedData.balance.eth = resp.result["XETH"] || "0";
-    CachedData.balance.ada = resp.result["ADA"] || "0";
-    CachedData.balance.dash = resp.result["DASH"] || "0";
+    for (let asset of CachedData.assets) {
+      CachedData.balance[asset.var] = resp.result[asset.asset] || "0";
+    }
     // +1 on the rate counter
     return kraken.api("TradeBalance", {asset: "EUR"});
   }).then(resp => {
@@ -64,12 +63,11 @@ function loadOrders() {
 
     let info = [
       ["{bold}tot.{/bold}", removeTrailingZero(CachedData.balance.equivalent) + " €"],
-      ["{bold}EUR{/bold}", removeTrailingZero(CachedData.balance.eur)],
-      ["{bold}XBT{/bold}", removeTrailingZero(CachedData.balance.xbt)],
-      ["{bold}ETH{/bold}", removeTrailingZero(CachedData.balance.eth)],
-      ["{bold}ADA{/bold}", removeTrailingZero(CachedData.balance.ada)],
-      ["{bold}DASH{/bold}", removeTrailingZero(CachedData.balance.dash)]
+      ["{bold}EUR{/bold}", removeTrailingZero(CachedData.balance.eur)]
     ];
+    for (let asset of CachedData.assets) {
+      info.push(["{bold}" + asset.name + "{/bold}", removeTrailingZero(CachedData.balance[asset.var])]);
+    }
     infoTable.setData(info);
     // +2 on the rate counter
     return kraken.api("Ticker", {pair: "XXBTZEUR,XETHZEUR,ADAEUR,DASHEUR"});
