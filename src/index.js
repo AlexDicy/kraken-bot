@@ -69,12 +69,17 @@ function loadOrders() {
       info.push(["{bold}" + asset.name + "{/bold}", removeTrailingZero(CachedData.balance[asset.var])]);
     }
     infoTable.setData(info);
-    // +2 on the rate counter
-    return kraken.api("Ticker", {pair: "XXBTZEUR,XETHZEUR,ADAEUR,DASHEUR"});
+    // build the assets pair string
+    let pairs = [];
+    for (let asset of CachedData.assets) {
+      pairs.push(asset.pair);
+    }
+    return kraken.api("Ticker", {pair: pairs.join(",")});
   }).then(resp => {
     setStatus("loading 24h");
     let data = [["{bold}asset{/bold}", "{bold}price{/bold}", "{bold}24h high{/bold}"]];
     for (let asset of CachedData.assets) {
+      CachedData.price[asset.var] = {};
       CachedData.price[asset.var].a = resp.result[asset.pair].a[0];
       CachedData.price[asset.var].b = resp.result[asset.pair].b[0];
       CachedData.average[asset.var] = resp.result[asset.pair].p[1];
@@ -110,7 +115,7 @@ function loadOrders() {
     }
     ordersTable.setData(data);
     screen.render();
-    // get asset ticker for XBT, ETH and ADA
+    // get asset ticker for the assets
     setStatus("loading ticker");
   }).then(() => {
     setStatus("idle");

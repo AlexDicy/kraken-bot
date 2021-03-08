@@ -12,37 +12,15 @@ export default class CachedData {
   // last price
   static price = {
     // keys are set during runtime
-    xbt: {
-      a: 0,
-      b: 0
-    },
-    eth: {
-      a: 0,
-      b: 0
-    },
-    ada: {
-      a: 0,
-      b: 0
-    },
-    dash: {
-      a: 0,
-      b: 0
-    }
   };
 
   // price 24h average
   static average = {
-    xbt: 0,
-    eth: 0,
-    ada: 0,
-    dash: 0
+    // keys are set during runtime
   };
   // price 24h high
   static high = {
-    xbt: 0,
-    eth: 0,
-    ada: 0,
-    dash: 0
+    // keys are set during runtime
   };
 
   /** @type Order[] */
