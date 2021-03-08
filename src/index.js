@@ -11,8 +11,13 @@ import {Type} from "./Enums.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-const key = "***REMOVED***";
-const secret = "***REMOVED***";
+let key = "***REMOVED***";
+let secret = "***REMOVED***";
+
+if (isProduction) {
+  key = "***REMOVED***";
+  secret = "***REMOVED***";
+}
 
 export const kraken = new KrakenClient(key, secret);
 // save the last 10000 logs sent to websockets
