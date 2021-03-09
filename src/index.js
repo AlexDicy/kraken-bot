@@ -222,7 +222,7 @@ setTimeout(() => {
 //
 exitHook(exitCallback => {
   sendMessage("LOG", {text: "{bold}Bot is closing{/bold}"});
-  clearImmediate(loopId);
+  clearInterval(loopId);
   let waitTime = 0;
   if (Bot.isRunning) {
     waitTime += Bot.sellWaitTime;
