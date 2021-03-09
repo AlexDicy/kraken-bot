@@ -9,3 +9,6 @@ Check the 24h high for the asset:\
 
 You should only trade on coins which you wish to HODL on, since it is part of the strategy.
 ### Comes with a minimal web dashboard
+![screenshot-web](screenshot-web.png)
+### Also comes with useful terminal dashboard
+![screenshot-web](screenshot-terminal.png)
