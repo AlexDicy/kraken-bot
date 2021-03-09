@@ -62,7 +62,7 @@ const app = Vue.createApp({
     },
     connectWS() {
       const hostname = window.location.hostname;
-      const host = hostname === "localhost" ? hostname + ":80" : window.location.host + "/ws/";
+      const host = hostname === "localhost" ? hostname + ":80" : window.location.host;
       const secure = window.location.protocol !== "http:";
       const ws = new WebSocket((secure ? "wss://" : "ws://") + host);
       ws.addEventListener("error", () => {
