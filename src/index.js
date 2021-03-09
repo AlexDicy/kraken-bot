@@ -11,12 +11,12 @@ import {Type} from "./Enums.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-let key = "***REMOVED***";
-let secret = "***REMOVED***";
+let key = "removed";
+let secret = "removed";
 
 if (isProduction) {
-  key = "***REMOVED***";
-  secret = "***REMOVED***";
+  key = "removed";
+  secret = "removed";
 }
 
 export const kraken = new KrakenClient(key, secret);
