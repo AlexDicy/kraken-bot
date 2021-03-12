@@ -8,6 +8,7 @@ import CachedData from "./CachedData.js";
 import Order from "./Order.js";
 import Bot from "./Bot.js";
 import {Type} from "./Enums.js";
+import * as fs from "fs";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -40,6 +41,16 @@ server.on("upgrade", (request, socket, head) => {
     ws.emit("connection", socket, request);
   });
 });
+
+// load /assets.json
+const file = fs.readFileSync("./assets.json", "utf-8");
+const assets = JSON.parse(file);
+if (assets instanceof Array) {
+  CachedData.assets = assets;
+} else {
+  console.error("assets.json is malformed, should contain an array, check README.md");
+  process.exit();
+}
 
 //
 // checker logic
