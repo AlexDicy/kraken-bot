@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import exitHook from "async-exit-hook";
 import {screen, avgTable, infoTable, ordersTable, topText, logText} from "./terminal.js";
 import KrakenClient from "./kraken.js";
@@ -10,14 +11,16 @@ import Bot from "./Bot.js";
 import {Type} from "./Enums.js";
 import * as fs from "fs";
 
+dotenv.config();
+
 const isProduction = process.env.NODE_ENV === "production";
 
-let key = "removed";
-let secret = "removed";
+let key = process.env.DEV_API_KEY;
+let secret = process.env.DEV_API_SECRET;
 
 if (isProduction) {
-  key = "removed";
-  secret = "removed";
+  key = process.env.API_KEY;
+  secret = process.env.API_SECRET;
 }
 
 export const kraken = new KrakenClient(key, secret);

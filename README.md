@@ -80,6 +80,9 @@ Parameters:\
 `tradeValue`: the cost of each buy order\
 `maxTrades`: the limit for how many orders we can have
 
-2. test your basic settings in development mode (run `npm start`)
+2. write your API keys and secrets to `.env` (use different keys for development and production)
 
-3. TODO
+3. test your basic settings in development mode (just run `npm start`)
+
+4. if you're ok with your configuration, edit `NODE_ENV` inside `.env` and change it from `development` to `production`.
+The bot should start running.
