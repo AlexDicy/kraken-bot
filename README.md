@@ -15,6 +15,7 @@ You should only trade on coins which you wish to HODL on, since it is part of th
 
 
 ## Setup
+0. copy `assets.json.sample` to `assets.json` and copy `.env.sample` to `.env`
 1. edit and add your assets in assets.json
 ```json
 [
